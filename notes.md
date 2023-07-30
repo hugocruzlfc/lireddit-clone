@@ -52,4 +52,4 @@ https://formidable.com/open-source/urql/docs/basics/react-preact/
 CODEGEN:
 https://graphql-code-generator.com/docs/getting-started/installation
 
-estoy en el min :3:11:33 -about login page
+estoy en el min :3:20:48 -about login page
