@@ -43,6 +43,8 @@ yarn add urql graphql
 yarn add --dev typescript @graphql-codegen/cli
 npx graphql-code-generator init
 yarn add --dev @graphql-codegen/typescript-urql
+yarn add @urql/exchange-graphcache
+yarn add next-urql react-is
 
 //apuntesm doc:
 
@@ -53,3 +55,10 @@ CODEGEN:
 https://graphql-code-generator.com/docs/getting-started/installation
 
 estoy en el min :3:20:48 -about login page
+
+// about next.js
+me => browse http://localhost:3000
+=> nextsjs server
+=> request to graphql server localhost:4000/graphql
+=> build the HTML
+=> sending back to your browser
