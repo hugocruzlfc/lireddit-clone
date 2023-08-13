@@ -21,6 +21,10 @@ export class User {
   username!: string;
 
   @Field(() => String) // this is for graphql
+  @Property({ type: "text", unique: true })
+  email!: string;
+
+  @Field(() => String) // this is for graphql
   @Property({ type: "text" })
   password!: string;
 }

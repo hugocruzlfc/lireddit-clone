@@ -13,11 +13,15 @@ import { UserResolver } from "./resolvers/user";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import { MyContext } from "./types";
 import cors from "cors";
+//import { User } from "./entities/User";
+//import { sendEmail } from "./utils/sendEmail";
 
 //import { Post } from "./entities/Posts";
 
 const main = async () => {
+  //sendEmail("bob@gmail.com", "hello there");
   const orm = await MikroORM.init(mikroConfig);
+  //await orm.em.nativeDelete(User, {});
   await orm.getMigrator().up();
   const app = express();
 

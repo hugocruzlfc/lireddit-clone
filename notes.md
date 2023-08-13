@@ -12,6 +12,8 @@ yarn add redis connect-redis express-session
 yarn add -D @types/redis @types/express-session
 yarn add cors
 yarn add -D @types/cors
+yarn add nodemailer
+yarn add -D @types/nodemailer
 
 req.session.userId = user.id; // store user id session
 
@@ -54,7 +56,7 @@ https://formidable.com/open-source/urql/docs/basics/react-preact/
 CODEGEN:
 https://graphql-code-generator.com/docs/getting-started/installation
 
-estoy en el min :3:20:48 -about login page
+estoy en el min :4:029:08 -about login page
 
 // about next.js
 me => browse http://localhost:3000
