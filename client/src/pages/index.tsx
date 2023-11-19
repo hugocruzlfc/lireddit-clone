@@ -6,7 +6,6 @@ import { usePostsQuery } from "../generated/graphql";
 const Index = () => {
   const [{ data }] = usePostsQuery();
 
-  console.log(data);
   return (
     <>
       <NavBar />
