@@ -1,9 +1,6 @@
 ## In the server
 
 ```bash
-    #Running de migration:
-    npx mikro-orm migration:create
-    npx mikro-orm migration:create --run
 
     # Libraries
     yarn add express apollo-server-express graphql type-graphql pg @mikro-orm/cli @mikro-orm/core @mikro-orm/migrations @mikro-orm/postgresql
@@ -11,12 +8,18 @@
     yarn add reflect-metadata
     yarn add argon2
 
-    yarn add redis connect-redis express-session
-    yarn add -D @types/redis @types/express-session
+    yarn add connect-redis express-session
+    yarn add -D  @types/express-session
     yarn add cors
     yarn add -D @types/cors
     yarn add nodemailer
     yarn add -D @types/nodemailer
+    yarn add uuid ioredis
+    yarn add -D @types/uuid @types/ioredis
+
+    #Running de migration:
+    npx mikro-orm migration:create
+    npx mikro-orm migration:create --run
 
     # Docs
     req.session.userId = user.id; // store user id session
@@ -64,7 +67,7 @@
     CODEGEN:
     https://graphql-code-generator.com/docs/getting-started/installation
 
-    estoy en el min :4:029:08 -about login page
+    estoy en el min :5:07: -about login page
 
     # About next.js
     me => browse http://localhost:3000

@@ -4,7 +4,8 @@ import mikroConfig from "./mikro-orm.config";
 import express from "express";
 import RedisStore from "connect-redis";
 import session from "express-session";
-import { createClient } from "redis";
+// import { createClient } from "redis";
+import Redis from "ioredis";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
@@ -26,12 +27,13 @@ const main = async () => {
   const app = express();
 
   // Initialize client.
-  let redisClient = createClient();
-  redisClient.connect().catch(console.error);
+  let redis = new Redis();
+  // let redisClient = createClient();
+  //redisClient.connect().catch(console.error);
 
   // Initialize store.
   let redisStore = new RedisStore({
-    client: redisClient,
+    client: redis,
     disableTouch: true,
   });
 
@@ -59,7 +61,7 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em, req, res }),
+    context: ({ req, res }): MyContext => ({ em: orm.em, req, res, redis }),
   });
 
   await apolloServer.start();
