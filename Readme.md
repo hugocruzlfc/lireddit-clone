@@ -5,6 +5,7 @@
     npx mikro-orm migration:create
     npx mikro-orm migration:create --run
 
+    # Libraries
     yarn add express apollo-server-express graphql type-graphql pg @mikro-orm/cli @mikro-orm/core @mikro-orm/migrations @mikro-orm/postgresql
     yarn add -D @types/express
     yarn add reflect-metadata
@@ -17,6 +18,7 @@
     yarn add nodemailer
     yarn add -D @types/nodemailer
 
+    # Docs
     req.session.userId = user.id; // store user id session
 
     {userId: 1} => send this to redis
@@ -43,7 +45,8 @@
 
 ## In the web
 
-    ```bash
+```bash
+ # Libraries
     yarn create next-app --example with-chakra-ui web
     yarn add formik
     yarn add urql graphql
@@ -53,7 +56,7 @@
     yarn add @urql/exchange-graphcache
     yarn add next-urql react-is
 
-    //apuntesm doc:
+    # Docs
 
     URQL:
     https://formidable.com/open-source/urql/docs/basics/react-preact/
@@ -63,13 +66,11 @@
 
     estoy en el min :4:029:08 -about login page
 
-    // about next.js
+    # About next.js
     me => browse http://localhost:3000
     => nextsjs server
     => request to graphql server localhost:4000/graphql
     => build the HTML
     => sending back to your browser
-
-```
 
 ```
