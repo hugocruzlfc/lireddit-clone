@@ -1,23 +1,23 @@
 import { Post } from "../entities";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { PostService } from "../services";
 
 @Resolver()
 export class PostResolver {
+  constructor(private readonly postService: PostService) {}
   @Query(() => [Post])
   async posts(): Promise<Post[]> {
-    return Post.find();
+    return this.postService.getPosts();
   }
 
   @Query(() => Post, { nullable: true })
-  post(@Arg("id") id: number): Promise<Post | null> {
-    return Post.findOne({
-      where: { id },
-    });
+  async post(@Arg("id") id: number): Promise<Post | null> {
+    return this.postService.getPost(id);
   }
 
   @Mutation(() => Post)
-  async createPost(@Arg("title") title: string): Promise<Post> {
-    return Post.create({ title }).save();
+  async createPost(@Arg("title") title: string): Promise<Post | null> {
+    return this.postService.createPost(title);
   }
 
   @Mutation(() => Post, { nullable: true })
@@ -25,25 +25,11 @@ export class PostResolver {
     @Arg("id") id: number,
     @Arg("title", () => String, { nullable: true }) title: string
   ): Promise<Post | null> {
-    const post = await Post.findOne({ where: { id } });
-    if (!post) {
-      return null;
-    }
-    if (typeof title !== "undefined") {
-      post.title = title;
-      await Post.update({ id }, { title });
-    }
-    return post;
+    return this.postService.updatePost(id, title);
   }
 
   @Mutation(() => Boolean)
   async deletePost(@Arg("id") id: number): Promise<boolean> {
-    try {
-      await Post.delete({ id });
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    return this.postService.deletePost(id);
   }
 }

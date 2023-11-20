@@ -1,3 +1,19 @@
+# Lireddit Clone application
+
+## Steps
+
+```bash
+    # Clone the repo
+    # In server folder
+      yarn install
+      docker-compose up -d
+      yarn run dev
+
+    # In web folder
+      yarn install
+      yarn run dev
+```
+
 ## In the server
 
 ```bash

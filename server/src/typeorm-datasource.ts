@@ -1,14 +1,18 @@
-import { DataSourceOptions } from "typeorm";
+import { DataSource, DataSourceOptions } from "typeorm";
 import { Post, User } from "./entities";
 
-export default {
+const dataSourceOptions = {
   type: "postgres",
   host: "localhost",
   port: 5432,
   username: "postgres",
   password: "postgres",
-  database: "lireddit2",
+  database: "lireddit",
   entities: [Post, User],
   synchronize: true,
   logging: true,
 } as DataSourceOptions;
+
+const AppDataSource = new DataSource(dataSourceOptions);
+
+export default AppDataSource;

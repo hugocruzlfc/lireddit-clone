@@ -1,47 +1,23 @@
 import { MyContext } from "../types";
 
-import {
-  Arg,
-  Ctx,
-  Field,
-  Mutation,
-  ObjectType,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { User } from "../entities/User";
 import argon2 from "argon2";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
-import { validateRegister, sendEmail } from "../utils";
-import { v4 } from "uuid";
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-  @Field()
-  message: string;
-}
-
-@ObjectType()
-class UserResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
-
-  @Field(() => User, { nullable: true })
-  user?: User;
-}
+import { UsernamePasswordInput } from "../dtos";
+import { UserService } from "../services";
+import { UserResponse } from "../dtos";
 
 @Resolver()
 export class UserResolver {
+  constructor(private readonly userService: UserService) {}
+
   @Query(() => User, { nullable: true }) // this is for graphql
   async me(@Ctx() { req }: MyContext) {
     if (!req.session!.userId) {
       return null;
     }
-    const user = await User.findOne({ where: { id: req.session!.userId } });
-    return user;
+    return this.userService.getUserById(req.session!.userId);
   }
 
   @Mutation(() => Boolean)
@@ -49,27 +25,7 @@ export class UserResolver {
     @Arg("email") email: string,
     @Ctx() { redis }: MyContext
   ) {
-    const user = await User.findOne({ where: { email } });
-
-    if (!user) {
-      // the email is not in the db
-      return false;
-    }
-
-    const token = v4();
-
-    await redis.set(
-      FORGET_PASSWORD_PREFIX + token,
-      user.id,
-      "EX",
-      1000 * 60 * 60 * 24 * 3
-    ); // 3 days;
-
-    await sendEmail(
-      email,
-      `<a href="http://localhost:3000/change-password/${token}">reset password</a>`
-    );
-    return true;
+    return this.userService.forgotPassword(email, redis);
   }
 
   @Mutation(() => UserResponse)
@@ -77,82 +33,25 @@ export class UserResolver {
     @Arg("options") options: UsernamePasswordInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const errors = validateRegister(options);
-
-    if (errors) {
-      return { errors };
-    }
-
-    const hashedPassword = await argon2.hash(options.password);
-    const user = User.create({
-      username: options.username,
-      email: options.email,
-      password: hashedPassword,
-    });
-
-    try {
-      await user.save(); // equivalent to await em.persistAndFlush(user) in mikro-orm
-    } catch (error) {
-      // || error.detail.includes("already exists"))
-      // duplicate username error
-      //if (error.code === "23505") {
-      if (error.detail.includes("already exists")) {
-        return {
-          errors: [
-            {
-              field: "username",
-              message: "username already taken",
-            },
-          ],
-        };
-      }
-    }
+    const serviceResponse = await this.userService.createUser(options);
 
     // store user id session
     // this will set a cookie on the user
     // keep them logged in
-    req.session!.userId = user.id;
+    if (serviceResponse.errors) {
+      return {
+        errors: serviceResponse.errors,
+      };
+    }
+
+    req.session!.userId = serviceResponse?.user?.id;
 
     return {
-      user,
+      user: serviceResponse.user,
     };
   }
 
   @Mutation(() => UserResponse)
-  // async login(
-  //   @Arg("options") options: UsernamePasswordInput,
-  //   @Ctx() { em, req }: MyContext
-  // ): Promise<UserResponse> {
-  //   const user = await em.findOne(User, { username: options.username });
-  //   if (!user) {
-  //     return {
-  //       errors: [
-  //         {
-  //           field: "username",
-  //           message: "username doesn't exist",
-  //         },
-  //       ],
-  //     };
-  //   }
-
-  //   const valid = await argon2.verify(user.password, options.password);
-  //   if (!valid) {
-  //     return {
-  //       errors: [
-  //         {
-  //           field: "password",
-  //           message: "incorrect password",
-  //         },
-  //       ],
-  //     };
-  //   }
-
-  //   req.session!.userId = user.id;
-
-  //   return {
-  //     user,
-  //   };
-  // }
   async login(
     @Arg("usernameOrEmail") usernameOrEmail: string,
     @Arg("password") password: string,
