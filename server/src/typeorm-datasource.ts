@@ -1,4 +1,4 @@
-import { DataSource, DataSourceOptions } from "typeorm";
+import { DataSource, DataSourceOptions,  } from "typeorm";
 import { Post, User } from "./entities";
 
 const dataSourceOptions = {
@@ -10,7 +10,8 @@ const dataSourceOptions = {
   database: "lireddit",
   entities: [Post, User],
   synchronize: true,
-  logging: true,
+  logging: false,
+  
 } as DataSourceOptions;
 
 const AppDataSource = new DataSource(dataSourceOptions);

@@ -14,7 +14,9 @@
       yarn run dev
 ```
 
-## In the server
+# Technologies
+
+### In the server
 
 ```bash
 

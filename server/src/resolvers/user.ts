@@ -1,23 +1,20 @@
 import { MyContext } from "../types";
-
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { User } from "../entities/User";
 import argon2 from "argon2";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "../dtos";
-import { UserService } from "../services";
 import { UserResponse } from "../dtos";
+import { createUser, getUserById, forgotPassword, login } from "../services";
 
 @Resolver()
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
-
   @Query(() => User, { nullable: true }) // this is for graphql
   async me(@Ctx() { req }: MyContext) {
     if (!req.session!.userId) {
       return null;
     }
-    return this.userService.getUserById(req.session!.userId);
+    return getUserById(req.session!.userId);
   }
 
   @Mutation(() => Boolean)
@@ -25,7 +22,7 @@ export class UserResolver {
     @Arg("email") email: string,
     @Ctx() { redis }: MyContext
   ) {
-    return this.userService.forgotPassword(email, redis);
+    return forgotPassword(email, redis);
   }
 
   @Mutation(() => UserResponse)
@@ -33,7 +30,7 @@ export class UserResolver {
     @Arg("options") options: UsernamePasswordInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const serviceResponse = await this.userService.createUser(options);
+    const serviceResponse = await createUser(options);
 
     // store user id session
     // this will set a cookie on the user
@@ -57,38 +54,18 @@ export class UserResolver {
     @Arg("password") password: string,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const user = await User.findOne({
-      where: usernameOrEmail.includes("@")
-        ? { email: usernameOrEmail }
-        : { username: usernameOrEmail },
-    });
-    if (!user) {
+    const serviceResponse = await login(usernameOrEmail, password);
+
+    if (serviceResponse.errors) {
       return {
-        errors: [
-          {
-            field: "usernameOrEmail",
-            message: "username doesn't exist",
-          },
-        ],
+        errors: serviceResponse.errors,
       };
     }
 
-    const valid = await argon2.verify(user.password, password);
-    if (!valid) {
-      return {
-        errors: [
-          {
-            field: "password",
-            message: "incorrect password",
-          },
-        ],
-      };
-    }
-
-    req.session!.userId = user.id;
+    req.session!.userId = serviceResponse?.user?.id;
 
     return {
-      user,
+      user: serviceResponse.user,
     };
   }
 
