@@ -14,16 +14,25 @@ import { UserResolver } from "./resolvers/user";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import { MyContext } from "./types";
 import cors from "cors";
+import { DataSource } from "typeorm";
+import dataSourceOptions from "./typeorm-datasource";
 //import { User } from "./entities/User";
 //import { sendEmail } from "./utils/sendEmail";
 
 //import { Post } from "./entities/Posts";
 
 const main = async () => {
+  const appDataSource = new DataSource(dataSourceOptions);
   //sendEmail("bob@gmail.com", "hello there");
-  const orm = await MikroORM.init(mikroConfig);
+  //const orm = await MikroORM.init(mikroConfig);
   //await orm.em.nativeDelete(User, {});
-  await orm.getMigrator().up();
+  //await orm.getMigrator().up();
+  appDataSource
+    .initialize()
+    .then(() => {
+      console.log("Connected to database through TypeORM.");
+    })
+    .catch((error) => console.log(error));
   const app = express();
 
   // Initialize client.
@@ -61,7 +70,7 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
 
   await apolloServer.start();

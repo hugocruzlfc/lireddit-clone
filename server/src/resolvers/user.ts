@@ -36,24 +36,20 @@ class UserResponse {
 @Resolver()
 export class UserResolver {
   @Query(() => User, { nullable: true }) // this is for graphql
-  async me(@Ctx() { req, em }: MyContext) {
-    //console.log(req.session);
-    // if you are not logged in
+  async me(@Ctx() { req }: MyContext) {
     if (!req.session!.userId) {
       return null;
     }
-    const user = await em.findOne(User, { id: req.session!.userId });
+    const user = await User.findOne({ where: { id: req.session!.userId } });
     return user;
   }
 
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
-    @Ctx() { em, redis }: MyContext
+    @Ctx() { redis }: MyContext
   ) {
-    const user = await em.findOne(User, { email });
-
-    console.log(user);
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       // the email is not in the db
@@ -79,7 +75,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { em, req }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options);
 
@@ -88,13 +84,14 @@ export class UserResolver {
     }
 
     const hashedPassword = await argon2.hash(options.password);
-    const user = em.create(User, {
+    const user = User.create({
       username: options.username,
       email: options.email,
       password: hashedPassword,
     });
+
     try {
-      await em.persistAndFlush(user);
+      await user.save(); // equivalent to await em.persistAndFlush(user) in mikro-orm
     } catch (error) {
       // || error.detail.includes("already exists"))
       // duplicate username error
@@ -159,14 +156,13 @@ export class UserResolver {
   async login(
     @Arg("usernameOrEmail") usernameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { em, req }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(
-      User,
-      usernameOrEmail.includes("@")
+    const user = await User.findOne({
+      where: usernameOrEmail.includes("@")
         ? { email: usernameOrEmail }
-        : { username: usernameOrEmail }
-    );
+        : { username: usernameOrEmail },
+    });
     if (!user) {
       return {
         errors: [
@@ -216,7 +212,7 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string, // this is for graphql
     @Arg("newPassword") newPassword: string,
-    @Ctx() { em, redis, req }: MyContext
+    @Ctx() { redis, req }: MyContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 2) {
       return {
@@ -243,7 +239,8 @@ export class UserResolver {
       };
     }
 
-    const user = await em.findOne(User, { id: parseInt(userId) });
+    const userIdNum = parseInt(userId);
+    const user = await User.findOne({ where: { id: userIdNum } });
 
     if (!user) {
       return {
@@ -257,7 +254,7 @@ export class UserResolver {
     }
 
     user.password = await argon2.hash(newPassword);
-    em.persistAndFlush(user);
+    await User.update({ id: userIdNum }, { password: user.password });
 
     // remove token from redis
     await redis.del(redisKey);

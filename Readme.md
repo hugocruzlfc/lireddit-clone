@@ -16,6 +16,8 @@
     yarn add -D @types/nodemailer
     yarn add uuid ioredis
     yarn add -D @types/uuid @types/ioredis
+    yarn add typeorm
+    yarn add -D @types/node
 
     #Running de migration:
     npx mikro-orm migration:create
