@@ -53,9 +53,11 @@ export class UserResolver {
   ) {
     const user = await em.findOne(User, { email });
 
+    console.log(user);
+
     if (!user) {
       // the email is not in the db
-      return true;
+      return false;
     }
 
     const token = v4();
@@ -227,7 +229,8 @@ export class UserResolver {
       };
     }
 
-    const userId = await redis.get(FORGET_PASSWORD_PREFIX + token);
+    const redisKey = FORGET_PASSWORD_PREFIX + token;
+    const userId = await redis.get(redisKey);
 
     if (!userId) {
       return {
@@ -255,6 +258,9 @@ export class UserResolver {
 
     user.password = await argon2.hash(newPassword);
     em.persistAndFlush(user);
+
+    // remove token from redis
+    await redis.del(redisKey);
 
     // log in user after change password
     req.session!.userId = user.id;

@@ -10,8 +10,8 @@ export async function sendEmail(to: string, html: string) {
     port: 587,
     secure: false,
     auth: {
-      user: "sikthkrndopheyn4@ethereal.email", //testAccount.user,
-      pass: "fETF5jTetyW6vpP46C", //testAccount.pass,
+      user: "fredy.emard34@ethereal.email", //testAccount.user,
+      pass: "jR9jzP62SExfpam11g", //testAccount.pass,
     },
   });
   // send mail with defined transport object
