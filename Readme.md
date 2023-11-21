@@ -25,7 +25,6 @@
     yarn add -D @types/express
     yarn add reflect-metadata
     yarn add argon2
-
     yarn add connect-redis express-session
     yarn add -D  @types/express-session
     yarn add cors
@@ -72,17 +71,16 @@
  # Libraries
     yarn create next-app --example with-chakra-ui web
     yarn add formik
-    yarn add urql graphql
+    yarn add urql graphql @urql/exchange-persisted @urql/next @urql/exchange-graphcache
     yarn add --dev typescript @graphql-codegen/cli
     npx graphql-code-generator init
     yarn add --dev @graphql-codegen/typescript-urql
-    yarn add @urql/exchange-graphcache
-    yarn add next-urql react-is
+    yarn add  react-is
 
     # Docs
 
     URQL:
-    https://formidable.com/open-source/urql/docs/basics/react-preact/
+     https://formidable.com/open-source/urql/
 
     CODEGEN:
     https://graphql-code-generator.com/docs/getting-started/installation

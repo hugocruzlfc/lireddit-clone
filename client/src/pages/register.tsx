@@ -6,8 +6,6 @@ import { Box, Button } from "@chakra-ui/react";
 import { useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
-import { NextUrqlClientConfig, withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../urql/createUrqlClient";
 
 interface RegisterProps {}
 
@@ -68,6 +66,4 @@ const Register: React.FC<RegisterProps> = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient as NextUrqlClientConfig)(
-  Register
-);
+export default Register;

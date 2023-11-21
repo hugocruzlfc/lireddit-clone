@@ -1,6 +1,4 @@
-import { NextUrqlClientConfig, withUrqlClient } from "next-urql";
 import NavBar from "../components/NavBar";
-import { createUrqlClient } from "../urql/createUrqlClient";
 import { usePostsQuery } from "../generated/graphql";
 
 const Index = () => {
@@ -19,6 +17,4 @@ const Index = () => {
   );
 };
 
-export default withUrqlClient(createUrqlClient as NextUrqlClientConfig, {
-  ssr: true,
-})(Index);
+export default Index;
