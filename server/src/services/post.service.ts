@@ -1,4 +1,6 @@
+import { Post } from "../entities";
 import { postRepository } from "../repositories";
+import { PostInput } from "../dtos";
 
 export async function getPosts() {
   try {
@@ -20,11 +22,23 @@ export async function getPost(id: number) {
   }
 }
 
-export async function createPost(title: string) {
+export async function createPost(postInput: PostInput, userId: number) {
   try {
-    const post = postRepository.create({ title });
-    await postRepository.save(post);
-    return post;
+    // const post = postRepository.create({ title });
+    // await postRepository.save(post);
+
+    //using query builder
+    const post = await postRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Post)
+      .values({
+        ...postInput,
+        creatorId: userId,
+      })
+      .returning("*")
+      .execute();
+    return post.raw[0] as Post;
   } catch (error) {
     console.log(error);
     return null;

@@ -6,8 +6,7 @@ import Redis from "ioredis";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 
-import { PostResolver } from "./resolvers/post";
-import { UserResolver } from "./resolvers/user";
+import { PostResolver, UserResolver } from "./resolvers";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import { MyContext } from "./types";
 import cors from "cors";
@@ -18,7 +17,10 @@ const main = async () => {
     .then(() => {
       console.log("Connected to database through TypeORM.");
     })
-    .catch((error) => console.log(error));
+    .catch((error) =>
+      console.error("Error during Data Source initialization:", error)
+    );
+
   const app = express();
 
   // Initialize client.

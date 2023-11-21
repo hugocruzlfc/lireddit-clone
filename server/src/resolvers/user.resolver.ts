@@ -1,6 +1,6 @@
 import { MyContext } from "../types";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
-import { User } from "../entities/User";
+import { User } from "../entities/user.entity";
 import { COOKIE_NAME } from "../constants";
 import { UsernamePasswordInput } from "../dtos";
 import { UserResponse } from "../dtos";
