@@ -3,6 +3,7 @@ import { Box, Button, Flex } from "@chakra-ui/react";
 import React from "react";
 import Link from "next/link";
 import { useMeQuery, useLogoutMutation } from "../generated/graphql";
+import { CustomLink } from "./CustomLink";
 
 const NavBar: React.FC = () => {
   const [{ fetching: fetchingLogout }, logout] = useLogoutMutation();
@@ -17,10 +18,20 @@ const NavBar: React.FC = () => {
     body = (
       <Flex>
         <Box mr={3}>
-          <Link href="/login">Login</Link>
+          <CustomLink
+            href="/login"
+            label="Login"
+            color="gray.50"
+            hover="gray.900"
+          />
         </Box>
         <Box>
-          <Link href="/register">Register</Link>
+          <CustomLink
+            href="/register"
+            label="Register"
+            color="gray.50"
+            hover="gray.900"
+          />
         </Box>
       </Flex>
     );
@@ -32,6 +43,7 @@ const NavBar: React.FC = () => {
 
         <Button
           variant="link"
+          color="gray.900"
           ml={3}
           onClick={() => logout({})}
           isLoading={fetchingLogout}

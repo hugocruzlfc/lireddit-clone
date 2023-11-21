@@ -67,13 +67,13 @@
 
 ```bash
  # Libraries
-    yarn create next-app --example with-chakra-ui web
     yarn add formik
     yarn add urql graphql @urql/exchange-persisted @urql/next @urql/exchange-graphcache
     yarn add --dev typescript @graphql-codegen/cli
     npx graphql-code-generator init
     yarn add --dev @graphql-codegen/typescript-urql
     yarn add  react-is
+    yarn add @chakra-ui/react @chakra-ui/next-js @emotion/react @emotion/styled framer-motion
 
     # Docs
 
@@ -83,7 +83,7 @@
     CODEGEN:
     https://graphql-code-generator.com/docs/getting-started/installation
 
-    estoy en el min :5:40:
+    estoy en el min : 6:21:
 
     # About next.js
     me => browse http://localhost:3000

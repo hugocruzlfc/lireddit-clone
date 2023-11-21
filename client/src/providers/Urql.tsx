@@ -1,21 +1,21 @@
 "use client";
 import React, { useMemo } from "react";
 import { withUrqlClient } from "../urql";
-import { UrqlProvider as Provider, SSRExchange, Client } from "@urql/next";
+import { UrqlProvider, SSRExchange, Client } from "@urql/next";
 
-export interface UrqlProviderProps {
+export interface UrqlProps {
   children: React.ReactNode;
 }
 
-export const UrqlProvider: React.FC<UrqlProviderProps> = ({ children }) => {
+export const Urql: React.FC<UrqlProps> = ({ children }) => {
   const [client, ssr] = useMemo(() => withUrqlClient(), []);
 
   return (
-    <Provider
+    <UrqlProvider
       client={client as Client}
       ssr={ssr as SSRExchange}
     >
       {children}
-    </Provider>
+    </UrqlProvider>
   );
 };

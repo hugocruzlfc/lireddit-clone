@@ -1,6 +1,4 @@
-import { ChakraProvider } from "@chakra-ui/react";
-import { UrqlProvider } from "../providers";
-import { theme } from "../utils";
+import { Urql as UrqlProvider, Chakra as ChakraProvider } from "../providers";
 import { NavBar } from "../components";
 
 export const metadata = {

@@ -9,6 +9,7 @@ import { InputField, Wrapper } from "@/src/components";
 const ForgotPassword: NextPage = ({}) => {
   const [, forgotPassword] = useForgotPasswordMutation();
   const [complete, setComplete] = useState(false);
+
   return (
     <Wrapper variant="small">
       <Formik

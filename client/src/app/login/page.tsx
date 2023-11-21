@@ -4,7 +4,7 @@ import { Form, Formik } from "formik";
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useLoginMutation } from "@/src/generated/graphql";
-import { ForgotPasswordLink, InputField, Wrapper } from "@/src/components";
+import { CustomLink, InputField, Wrapper } from "@/src/components";
 import { toErrorMap } from "@/src/utils";
 
 interface LoginProps {}
@@ -48,7 +48,10 @@ const Login: React.FC<LoginProps> = ({}) => {
                 ml="auto"
                 mt={2}
               >
-                <ForgotPasswordLink label="Forgot password?" />
+                <CustomLink
+                  label="Forgot password?"
+                  href="forgot-password"
+                />
               </Box>
             </Flex>
             <Button

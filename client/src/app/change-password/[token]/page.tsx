@@ -1,17 +1,22 @@
+"use client";
 import { NextPage } from "next";
 import { useState } from "react";
 import { Form, Formik } from "formik";
 import { Box, Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useChangePasswordMutation } from "@/src/generated/graphql";
-import { ForgotPasswordLink, InputField, Wrapper } from "@/src/components";
+import { CustomLink, InputField, Wrapper } from "@/src/components";
 import { toErrorMap } from "@/src/utils";
+import { DynamicUrlParam } from "@/src/types";
 
 export interface ChangePasswordProps {
-  token: string;
+  params: DynamicUrlParam;
 }
 
-const ChangePassword: NextPage<ChangePasswordProps> = ({ token }) => {
+//{ params }: { params: { token: string } }
+const ChangePassword: NextPage<ChangePasswordProps> = ({
+  params: { token },
+}) => {
   const [, changePassword] = useChangePasswordMutation();
   const router = useRouter();
   const [tokenError, setTokenError] = useState("");
@@ -47,7 +52,10 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }) => {
             {tokenError && (
               <Box>
                 <Box color="red">{tokenError}</Box>
-                <ForgotPasswordLink label="Go to forget it again" />
+                <CustomLink
+                  label="Go to forget it again"
+                  href="/forgot-password"
+                />
               </Box>
             )}
             <Button
@@ -64,11 +72,5 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }) => {
     </Wrapper>
   );
 };
-
-// ChangePassword.getInitialProps = ({ query }) => {
-//   return {
-//     token: query.token as string,
-//   };
-// };
 
 export default ChangePassword;
