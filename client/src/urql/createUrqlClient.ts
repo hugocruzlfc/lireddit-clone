@@ -9,6 +9,7 @@ import {
   MeQuery,
   RegisterMutation,
 } from "../generated/graphql";
+import { mapExchangeOnError as mapExchange } from "./onError";
 
 export function withUrqlClient() {
   const ssr = ssrExchange();
@@ -68,6 +69,7 @@ export function withUrqlClient() {
       persistedExchange({
         preferGetForPersistedQueries: true,
       }),
+      mapExchange,
       ssr,
       fetchExchange,
     ],

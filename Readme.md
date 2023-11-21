@@ -21,9 +21,8 @@
 ```bash
 
     # Libraries
-    yarn add express apollo-server-express graphql type-graphql pg @mikro-orm/cli @mikro-orm/core @mikro-orm/migrations @mikro-orm/postgresql
+    yarn add express apollo-server-express graphql type-graphql pg
     yarn add -D @types/express
-    yarn add reflect-metadata
     yarn add argon2
     yarn add connect-redis express-session
     yarn add -D  @types/express-session
@@ -33,12 +32,11 @@
     yarn add -D @types/nodemailer
     yarn add uuid ioredis
     yarn add -D @types/uuid @types/ioredis
-    yarn add typeorm
+    yarn add typeorm reflect-metadata
     yarn add -D @types/node
 
     #Running de migration:
-    npx mikro-orm migration:create
-    npx mikro-orm migration:create --run
+
 
     # Docs
     req.session.userId = user.id; // store user id session

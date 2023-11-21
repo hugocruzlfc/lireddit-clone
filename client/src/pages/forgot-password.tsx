@@ -1,6 +1,4 @@
 import { NextPage } from "next";
-import { NextUrqlClientConfig, withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../urql";
 import { InputField, Wrapper } from "../components";
 import { Form, Formik } from "formik";
 import { Box, Button } from "@chakra-ui/react";
@@ -48,6 +46,4 @@ const ForgotPassword: NextPage = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient as NextUrqlClientConfig)(
-  ForgotPassword
-);
+export default ForgotPassword;
