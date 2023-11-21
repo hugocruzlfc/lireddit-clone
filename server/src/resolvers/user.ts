@@ -1,11 +1,16 @@
 import { MyContext } from "../types";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { User } from "../entities/User";
-import argon2 from "argon2";
-import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
+import { COOKIE_NAME } from "../constants";
 import { UsernamePasswordInput } from "../dtos";
 import { UserResponse } from "../dtos";
-import { createUser, getUserById, forgotPassword, login } from "../services";
+import {
+  createUser,
+  getUserById,
+  forgotPassword,
+  login,
+  changePassword,
+} from "../services";
 
 @Resolver()
 export class UserResolver {
@@ -90,54 +95,17 @@ export class UserResolver {
     @Arg("newPassword") newPassword: string,
     @Ctx() { redis, req }: MyContext
   ): Promise<UserResponse> {
-    if (newPassword.length <= 2) {
+    const serviceResponse = await changePassword(token, newPassword, redis);
+
+    if (serviceResponse.errors) {
       return {
-        errors: [
-          {
-            field: "newPassword",
-            message: "length must be greater than 2",
-          },
-        ],
+        errors: serviceResponse.errors,
       };
     }
-
-    const redisKey = FORGET_PASSWORD_PREFIX + token;
-    const userId = await redis.get(redisKey);
-
-    if (!userId) {
-      return {
-        errors: [
-          {
-            field: "token",
-            message: "token expired",
-          },
-        ],
-      };
-    }
-
-    const userIdNum = parseInt(userId);
-    const user = await User.findOne({ where: { id: userIdNum } });
-
-    if (!user) {
-      return {
-        errors: [
-          {
-            field: "token",
-            message: "user no longer exists",
-          },
-        ],
-      };
-    }
-
-    user.password = await argon2.hash(newPassword);
-    await User.update({ id: userIdNum }, { password: user.password });
-
-    // remove token from redis
-    await redis.del(redisKey);
 
     // log in user after change password
-    req.session!.userId = user.id;
+    req.session!.userId = serviceResponse.user.id;
 
-    return { user };
+    return { user: serviceResponse.user };
   }
 }

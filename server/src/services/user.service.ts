@@ -192,3 +192,68 @@ export async function deleteUser(id: number) {
     return false;
   }
 }
+
+export async function changePassword(
+  token: string,
+  newPassword: string,
+  redis: Redis
+) {
+  try {
+    if (newPassword.length <= 2) {
+      return {
+        errors: [
+          {
+            field: "newPassword",
+            message: "length must be greater than 2",
+          },
+        ],
+      };
+    }
+
+    const redisKey = FORGET_PASSWORD_PREFIX + token;
+    const userId = await redis.get(redisKey);
+
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "token expired",
+          },
+        ],
+      };
+    }
+
+    const userIdNum = parseInt(userId);
+    const user = await userRepository.findOne({ where: { id: userIdNum } });
+
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "user no longer exists",
+          },
+        ],
+      };
+    }
+
+    user.password = await argon2.hash(newPassword);
+    await userRepository.update({ id: userIdNum }, { password: user.password });
+
+    // remove token from redis
+    await redis.del(redisKey);
+
+    return { user };
+  } catch (error) {
+    console.log(error);
+    return {
+      errors: [
+        {
+          field: "token",
+          message: "server error",
+        },
+      ],
+    };
+  }
+}

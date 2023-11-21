@@ -1,5 +1,4 @@
-import { DataSource, DataSourceOptions,  } from "typeorm";
-import { Post, User } from "./entities";
+import { DataSource, DataSourceOptions } from "typeorm";
 
 const dataSourceOptions = {
   type: "postgres",
@@ -8,10 +7,9 @@ const dataSourceOptions = {
   username: "postgres",
   password: "postgres",
   database: "lireddit",
-  entities: [Post, User],
+  entities: ["src/entities/**/*{.ts,.js}"],
   synchronize: true,
   logging: false,
-  
 } as DataSourceOptions;
 
 const AppDataSource = new DataSource(dataSourceOptions);
