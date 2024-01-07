@@ -2,9 +2,17 @@ import { Post } from "../entities";
 import { postRepository } from "../repositories";
 import { PostInput } from "../dtos";
 
-export async function getPosts() {
+export async function getPosts(limit: number, cursor: string | null) {
   try {
-    return await postRepository.find();
+    const realLimit = Math.min(50, limit);
+    return postRepository
+      .createQueryBuilder("post")
+      .where(cursor ? '"createdAt" < :cursor' : "1 = 1", {
+        cursor: new Date(parseInt(cursor as string)),
+      })
+      .orderBy('"createdAt"', "DESC")
+      .take(realLimit)
+      .getMany();
   } catch (error) {
     console.log(error);
     return []; // Return empty array in case of an error}

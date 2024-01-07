@@ -5,7 +5,11 @@ import { usePostsQuery } from "../generated/graphql";
 import { CustomLink } from "./CustomLink";
 
 export const Home: React.FC = () => {
-  const [{ data }] = usePostsQuery();
+  const [{ data }] = usePostsQuery({
+    variables: {
+      limit: 10,
+    },
+  });
 
   return (
     <Wrapper variant="regular">

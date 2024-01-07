@@ -2,6 +2,7 @@ import { Post } from "../entities";
 import {
   Arg,
   Ctx,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -21,8 +22,11 @@ import { isAuth } from "../middlewares";
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  async posts(): Promise<Post[]> {
-    return getPosts();
+  async posts(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<Post[]> {
+    return getPosts(limit, cursor);
   }
 
   @Query(() => Post, { nullable: true })
