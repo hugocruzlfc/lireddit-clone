@@ -4,19 +4,14 @@ import { useEffect } from "react";
 import { Form, Formik } from "formik";
 import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useCreatePostMutation, useMeQuery } from "@/src/generated/graphql";
+import { useCreatePostMutation } from "@/src/generated/graphql";
 import { InputField, Wrapper } from "@/src/components";
+import { useIsAuth } from "@/src/hooks";
 
 const CreatePost: NextPage = ({}) => {
   const [, createPost] = useCreatePostMutation();
   const router = useRouter();
-  const [{ data, fetching }] = useMeQuery();
-
-  useEffect(() => {
-    if (!fetching && !data?.me) {
-      router.replace("/login");
-    }
-  }, [fetching, data, router]);
+  useIsAuth();
 
   return (
     <Wrapper variant="small">

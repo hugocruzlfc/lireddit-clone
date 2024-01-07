@@ -2,13 +2,17 @@
 import React from "react";
 import Wrapper from "./Wrapper";
 import { usePostsQuery } from "../generated/graphql";
+import { CustomLink } from "./CustomLink";
 
 export const Home: React.FC = () => {
   const [{ data }] = usePostsQuery();
 
   return (
     <Wrapper variant="regular">
-      <div>Hellwefwefo</div>
+      <CustomLink
+        label="Create post"
+        href="/create-post"
+      />
       {!data ? (
         <div>Loading...</div>
       ) : (

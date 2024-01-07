@@ -2,7 +2,7 @@
 import React from "react";
 import { Form, Formik } from "formik";
 import { Box, Button, Flex } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLoginMutation } from "@/src/generated/graphql";
 import { CustomLink, InputField, Wrapper } from "@/src/components";
 import { toErrorMap } from "@/src/utils";
@@ -11,6 +11,7 @@ interface LoginProps {}
 
 const Login: React.FC<LoginProps> = ({}) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [, login] = useLoginMutation();
   return (
     <Wrapper variant="small">
@@ -24,7 +25,7 @@ const Login: React.FC<LoginProps> = ({}) => {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
             // worked
-            router.push("/");
+            router.push(searchParams.get("next") || "/");
           }
         }}
       >
