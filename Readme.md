@@ -83,7 +83,7 @@
     CODEGEN:
     https://graphql-code-generator.com/docs/getting-started/installation
 
-    estoy en el min : 6:52:
+    estoy en el min : 7:41
 
     # About next.js
     me => browse http://localhost:3000

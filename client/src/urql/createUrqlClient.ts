@@ -10,6 +10,7 @@ import {
   RegisterMutation,
 } from "../generated/graphql";
 import { mapExchangeOnError as mapExchange } from "./onError";
+import { cursorPagination } from "./cursorPagination";
 
 export function withUrqlClient() {
   const ssr = ssrExchange();
@@ -21,6 +22,11 @@ export function withUrqlClient() {
     },
     exchanges: [
       cacheExchange({
+        resolvers: {
+          Query: {
+            posts: cursorPagination(),
+          },
+        },
         updates: {
           Mutation: {
             logout: (_result, args, cache, info) => {
