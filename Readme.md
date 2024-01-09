@@ -83,7 +83,7 @@
     CODEGEN:
     https://graphql-code-generator.com/docs/getting-started/installation
 
-    estoy en el min : 6:21:
+    estoy en el min : 6:52:
 
     # About next.js
     me => browse http://localhost:3000
@@ -92,4 +92,11 @@
     => build the HTML
     => sending back to your browser
 
+```
+
+## Typeorm
+
+```bash
+    # Create migration
+   npx typeorm migration:create ./src/migrations/FackePosts
 ```

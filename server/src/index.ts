@@ -3,17 +3,17 @@ import express from "express";
 import RedisStore from "connect-redis";
 import session from "express-session";
 import Redis from "ioredis";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, ServerRegistration } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-
 import { PostResolver, UserResolver } from "./resolvers";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import { MyContext } from "./types";
 import cors from "cors";
-import AppDataSource from "./typeorm-datasource";
+import { AppDataSource } from "./typeorm.datasource";
+import { Request, Response } from "express"; // Importar los tipos Request y Response desde el paquete express
 
 const main = async () => {
-  AppDataSource.initialize()
+  await AppDataSource.initialize()
     .then(() => {
       console.log("Connected to database through TypeORM.");
     })
@@ -21,20 +21,20 @@ const main = async () => {
       console.error("Error during Data Source initialization:", error)
     );
 
-  const app = express();
+  const app: express.Application = express();
 
   // Initialize client.
-  let redis = new Redis();
+  const redis = new Redis();
 
   // Initialize store.
-  let redisStore = new RedisStore({
+  const redisStore = new RedisStore({
     client: redis,
     disableTouch: true,
   });
 
   app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
-  // Initialize sesssion storage.
+  // Initialize session storage.
   app.use(
     session({
       name: COOKIE_NAME,
@@ -56,7 +56,11 @@ const main = async () => {
       resolvers: [PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ req, res, redis }),
+    context: ({ req, res }: { req: Request; res: Response }): MyContext => ({
+      req,
+      res,
+      redis,
+    }),
   });
 
   await apolloServer.start();
@@ -64,7 +68,7 @@ const main = async () => {
   apolloServer.applyMiddleware({
     app,
     cors: false,
-  });
+  } as ServerRegistration);
 
   app.get("/", (_, res) => {
     res.send("hello");
